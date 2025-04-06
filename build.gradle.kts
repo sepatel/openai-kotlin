@@ -18,6 +18,7 @@ plugins {
 
 subprojects {
     apply(plugin = "com.diffplug.spotless")
+    apply(plugin = "maven-publish")
     configure<SpotlessExtension> {
         kotlin {
             target("**/*.kt")
@@ -46,8 +47,35 @@ subprojects {
     tasks.withType<KotlinJsTest>().configureEach {
         environment("LIB_ROOT", rootDir.toString())
     }
+
+    configure<PublishingExtension> {
+        publications {
+            create<MavenPublication>("maven-${project.name}") {
+//            from(components["java"]) // or "kotlin" if you're using Kotlin
+//            groupId = project.properties["GROUP"] as String
+                artifactId = project.name
+//            version = project.properties["VERSION_NAME"] as String
+            }
+        }
+
+        repositories {
+            maven {
+                name = "playerzero"
+                setUrl(
+                    if (version.toString().endsWith("-SNAPSHOT"))
+                        "https://nexus.playerzero.app/repository/maven-snapshots/"
+                    else "https://nexus.playerzero.app/repository/maven-releases/"
+                )
+                credentials {
+                    username = System.getenv("NEXUS_USERNAME") ?: project.findProperty("pzNexusUsername").toString()
+                    password = System.getenv("NEXUS_PASSWORD") ?: project.findProperty("pzNexusPassword").toString()
+                }
+            }
+        }
+    }
 }
 
-tasks.withType<DokkaMultiModuleTask>() {
-    outputDirectory.set(projectDir.resolve("docs"))
-}
+//tasks.withType<DokkaMultiModuleTask>() {
+//    outputDirectory.set(projectDir.resolve("docs"))
+//}
+
