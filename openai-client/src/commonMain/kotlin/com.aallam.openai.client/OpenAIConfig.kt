@@ -105,6 +105,11 @@ public class OpenAIHost(
         public val Gemini: OpenAIHost = OpenAIHost(baseUrl = "https://generativelanguage.googleapis.com/v1beta/openai/")
 
         /**
+         * A pre-configured instance of [OpenAIHost] for Groq`.
+         */
+        public val Groq: OpenAIHost = OpenAIHost(baseUrl = "https://api.groq.com/openai/v1/")
+
+        /**
          * Creates an instance of [OpenAIHost] configured for Azure hosting with the given resource name, deployment ID,
          * and API version.
          *
